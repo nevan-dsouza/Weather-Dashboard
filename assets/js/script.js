@@ -142,3 +142,8 @@ function renderCityWeather(cityName) {
         });
 }
 
+
+// Initialization of functions and event handlers
+renderCityHistory();
+$("#search-form").on("submit", handleSubmitSearch);
+$("#search-history").on("click", handleHistoryBtnClick);
