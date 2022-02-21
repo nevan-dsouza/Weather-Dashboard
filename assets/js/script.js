@@ -85,3 +85,60 @@ function renderCityWeather(cityName) {
     $("#uv-today-element").attr("style", "display: none;");
     $("#next-weather").attr("style", "display: none;");
 
+    let currentWeatherURL = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=" + cityName + "&appid=" + apiKey;
+
+    // first fetch data from the Current Weather Data API
+    fetch(currentWeatherURL)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            console.log('Current Weather Data Fetch Response \n-------------');
+            console.log(data);
+
+            let oneCallURL = "https://api.openweathermap.org/data/2.5/onecall?units=metric&exclude=minutely,hourly&lat=" + data.coord.lat + "&lon=" + data.coord.lon + "&appid=" + apiKey;
+
+            // Next use coordinates from Current Weather API Data to get One Call API data for all other info
+            // This is because the One Call API requires coordinates (longitude and latitude values) to retrieve the data
+            fetch(oneCallURL)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (oneCallData) {
+                    console.log('One Call API Fetch Response \n-------------');
+                    console.log(oneCallData);
+
+                    // displays the necessary data onto the page, dt represents the date, given in unix, UTC format
+                    // Moment.js * 1000 is used to convert the date to an understandable format 
+                    $("#date-today").text("(" + moment(oneCallData.daily[0].dt * 1000).format("l") + ")");
+                    $("#icon").attr("src", getIcon(oneCallData.daily[0].weather[0].icon))
+                    $("#temp-today").text(oneCallData.daily[0].temp.day.toString());
+                    $("#humid-today").text(oneCallData.daily[0].humidity);
+                    $("#wind-today").text(oneCallData.daily[0].wind_speed);
+                    $("#uv-today").text(oneCallData.daily[0].uvi);
+
+                    // changes style of UV Index element using function uviElementStyle that was previously declared
+                    $("#uv-today").attr("style", uviElementStyle(oneCallData.daily[0].uvi));
+
+                    // makes for loop for each of five weather forecast cards
+                    for (let i = 1; i <= 5; i++) {
+                        let forecastCard = $("#day-" + i);
+
+                        // displays data for each forecasted day
+                        forecastCard.find("h5").text(moment(oneCallData.daily[i].dt * 1000).format("l"));
+                        forecastCard.find("img").attr("src", getIcon(oneCallData.daily[i].weather[0].icon));
+                        forecastCard.find(".card-temp").text(oneCallData.daily[i].temp.day.toString());
+                        forecastCard.find(".card-wind").text(oneCallData.daily[i].wind_speed);
+                        forecastCard.find(".card-humid").text(oneCallData.daily[i].humidity);
+                    }
+                })
+            // Current Weather API Data is used to display city name, since One Call Data API lacks this information
+            $("#current-city").text(data.name);
+
+            // finally shows data since it is fully retrieved
+            $("#todays-weather").attr("style", "display: block;");
+            $("#uv-today-element").attr("style", "display: block;");
+            $("#next-weather").attr("style", "display: block;");
+        });
+}
+
