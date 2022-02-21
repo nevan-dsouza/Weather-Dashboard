@@ -14,9 +14,9 @@ city the user enters and store the searches locally.
 * Font Awesome (https://fontawesome.com/)
 
 ## Links
-> Repository Link: https://github.com/nevan-dsouza/weather-dashboard/
+> Repository Link: https://github.com/nevan-dsouza/Weather-Dashboard/
 >
-> Deployed Site Link: https://nevan-dsouza.github.io/weather-dashboard/
+> Deployed Site Link: https://nevan-dsouza.github.io/Weather-Dashboard/
 
 ## How the Weather Dashboard Looks 
 ![Image of the Weather Dashboard showing Toronto's weather data for 2/21/2022](./assets/images/weather-dashboard-pic.png)
